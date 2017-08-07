@@ -28,4 +28,12 @@ describe OysterCard do
     # allow(card).to receive(:top_up).and_return(10.0)
     expect(subject.deduct(5)).to eq 15
   end
+
+	it { expect(subject).to respond_to(:in_journey?) }
+
+	it "is initially not in a journey" do
+		expect(subject.in_journey?). to be_falsey
+	end
+
+
 end
