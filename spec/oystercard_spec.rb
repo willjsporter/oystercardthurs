@@ -46,3 +46,4 @@ describe OysterCard do
     expect(subject.in_use?).to eq true
   end
 end
+
