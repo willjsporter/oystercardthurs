@@ -24,9 +24,10 @@ describe OysterCard do
   end
 
   it 'will deduct an amount of money from the balance' do
-    subject.top_up(20)
+    top_up = OysterCard::DEFAULT_TOP_UP_AMOUNT
+    subject.top_up(top_up)
     # allow(card).to receive(:top_up).and_return(10.0)
-    expect(subject.deduct(5)).to eq 15
+    expect(subject.send(:deduct, 3)).to eq 2
   end
 
   it { is_expected.to respond_to(:tap_in) }
@@ -34,7 +35,8 @@ describe OysterCard do
   it { is_expected.to respond_to(:in_use?) }
 
   it 'will touch the customer in' do
-    subject.top_up(20)
+    top_up = OysterCard::DEFAULT_TOP_UP_AMOUNT
+    subject.top_up(top_up)
     expect(subject.tap_in).to eq 'You have tapped in'
   end
 
@@ -43,7 +45,8 @@ describe OysterCard do
   end
 
   it 'expects to tell me whether the card is in use?' do
-    subject.top_up(10)
+    top_up = OysterCard::DEFAULT_TOP_UP_AMOUNT
+    subject.top_up(top_up)
     subject.tap_in
     expect(subject.in_use?).to eq true
   end
@@ -51,5 +54,9 @@ describe OysterCard do
   it "Raises an error if there is not enough money" do
     expect { subject.tap_in }.to raise_error "Sorry, you don't have enough money! please top-up!"
   end
+  it "removes an amount from the balance" do
+    subject.top_up(20)
+  expect { subject.tap_out }.to change { subject.balance }.by -5
+end
 end
 

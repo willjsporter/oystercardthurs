@@ -3,7 +3,7 @@ class OysterCard
   attr_reader :balance
 
   MAX_BALANCE = 90
-
+  DEFAULT_TOP_UP_AMOUNT = 5
   def initialize
     @balance = 0
     @in_use = false
@@ -14,11 +14,13 @@ class OysterCard
     @balance += value.to_f
     "your oyster card has been topped up by £#{value.to_f}"
   end
-
+  
+  
   def deduct(value)
     @balance -= value
   end
 
+  public
   def tap_in
     if @balance <= 1 
       raise "Sorry, you don't have enough money! please top-up!"
