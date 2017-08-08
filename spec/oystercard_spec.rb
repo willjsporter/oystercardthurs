@@ -34,6 +34,7 @@ describe OysterCard do
   it { is_expected.to respond_to(:in_use?) }
 
   it 'will touch the customer in' do
+    subject.top_up(20)
     expect(subject.tap_in).to eq 'You have tapped in'
   end
 
@@ -42,8 +43,13 @@ describe OysterCard do
   end
 
   it 'expects to tell me whether the card is in use?' do
+    subject.top_up(10)
     subject.tap_in
     expect(subject.in_use?).to eq true
+  end
+
+  it "Raises an error if there is not enough money" do
+    expect { subject.tap_in }.to raise_error "Sorry, you don't have enough money! please top-up!"
   end
 end
 

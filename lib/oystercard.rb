@@ -20,9 +20,10 @@ class OysterCard
   end
 
   def tap_in
-    if @in_use == true
+    if @balance <= 1 
+      raise "Sorry, you don't have enough money! please top-up!"
+    elsif @in_use == true
       raise 'error, you have already tapped in'
-      deduct(5)
     else
       @in_use = true
       'You have tapped in'
