@@ -28,4 +28,21 @@ describe OysterCard do
     # allow(card).to receive(:top_up).and_return(10.0)
     expect(subject.deduct(5)).to eq 15
   end
+
+  it { is_expected.to respond_to(:tap_in) }
+  it { is_expected.to respond_to(:tap_out) }
+  it { is_expected.to respond_to(:in_use?) }
+
+  it 'will touch the customer in' do
+    expect(subject.tap_in).to eq 'You have tapped in'
+  end
+
+  it 'will touch the customer out' do
+    expect(subject.tap_out).to eq -5
+  end
+
+  it 'expects to tell me whether the card is in use?' do
+    subject.tap_in
+    expect(subject.in_use?).to eq true
+  end
 end
