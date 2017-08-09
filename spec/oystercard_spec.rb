@@ -44,7 +44,7 @@ describe OysterCard do
   end
 
   it 'will touch the customer out' do
-    expect(subject.tap_out).to eq -3
+    expect(subject.tap_out(:station)).to eq "you have tapped out at station"
   end
 
   it 'expects to tell me whether the card is in use?' do
@@ -60,26 +60,30 @@ describe OysterCard do
   it "removes an amount from the balance" do
     subject.top_up(20)
     minimum_charge = OysterCard::MINIMUM_CHARGE
-    expect { subject.tap_out }.to change { subject.balance }.by -minimum_charge
+    expect { subject.tap_out(:station) }.to change { subject.balance }.by -minimum_charge
   end
 
-  it "remembers the starting station" do
+  it "records that a passanger has entered a station" do
     subject.top_up(10)
     subject.tap_in("victoria")
-    expect(subject.entry_station).to eq "victoria"
+    expect(subject.entry_station).to eq true
   end
 
   it "has an array of journeys called @journey_array" do
-    expect(journey_array.is_a?(Array)).to eq true
+    expect(subject.journey_array.is_a?(Array)).to eq true
   end
 
   it "can store new elements as hashes in @journey_array" do
-    state1=journey_array
     subject.top_up(10)
     subject.tap_in("Victoria")
     expect(subject.journey_array[0][:in]).to eq "Victoria"
   end
-
-
+  
+  it "adds the values of station in and out to the entry_station array" do
+    subject.top_up(10)
+    subject.tap_in("victoria")
+    subject.tap_out("St James park")
+    expect(subject.entry_station.last.last[:in] = "victoria" && entry_station.last[:out] = "St James park").to eq true
+  end
 
 end
