@@ -1,12 +1,14 @@
 
 class OysterCard
-  attr_reader :balance
-
+  attr_reader :balance, :entry_station
+ 
   MAX_BALANCE = 90
   DEFAULT_TOP_UP_AMOUNT = 5
+  MINIMUM_CHARGE = 3
+  
   def initialize
     @balance = 0
-    @in_use = false
+    @entry_station = nil
   end
 
   def top_up(value)
@@ -15,34 +17,30 @@ class OysterCard
     "your oyster card has been topped up by £#{value.to_f}"
   end
   
-  
+  # private
   def deduct(value)
     @balance -= value
   end
 
-  public
-  def tap_in
+  # public
+  def tap_in (station)
     if @balance <= 1 
       raise "Sorry, you don't have enough money! please top-up!"
-    elsif @in_use == true
+    elsif @entry_station != nil
       raise 'error, you have already tapped in'
-    else
-      @in_use = true
-      'You have tapped in'
+    else 
+      @entry_station = station
+        "You have tapped in at #{station}"
     end
-    end
+  end
 
   def tap_out
-    @in_use = false
-    deduct(5)
+    @entry_station = nil
+    deduct(MINIMUM_CHARGE)
   end
 
   def in_use?
-    if @in_use == true
-      true
-    else
-      false
-    end
+    !!@entry_station
   end
 end
 

@@ -1,6 +1,9 @@
 require 'Oystercard'
 
 describe OysterCard do
+  let(:station) { double :station }
+
+
   it 'shows the initial balance of the card at 0' do
     expect(subject.balance).to eq 0
   end
@@ -37,26 +40,34 @@ describe OysterCard do
   it 'will touch the customer in' do
     top_up = OysterCard::DEFAULT_TOP_UP_AMOUNT
     subject.top_up(top_up)
-    expect(subject.tap_in).to eq 'You have tapped in'
+    expect(subject.tap_in(station)).to eq 'You have tapped in at #[Double :station]'
   end
 
   it 'will touch the customer out' do
-    expect(subject.tap_out).to eq -5
+    expect(subject.tap_out).to eq -3
   end
 
   it 'expects to tell me whether the card is in use?' do
     top_up = OysterCard::DEFAULT_TOP_UP_AMOUNT
     subject.top_up(top_up)
-    subject.tap_in
+    subject.tap_in("victoria")
     expect(subject.in_use?).to eq true
   end
 
   it "Raises an error if there is not enough money" do
-    expect { subject.tap_in }.to raise_error "Sorry, you don't have enough money! please top-up!"
+    expect { subject.tap_in(station) }.to raise_error "Sorry, you don't have enough money! please top-up!"
   end
   it "removes an amount from the balance" do
     subject.top_up(20)
-  expect { subject.tap_out }.to change { subject.balance }.by -5
+    minimum_charge = OysterCard::MINIMUM_CHARGE
+  expect { subject.tap_out }.to change { subject.balance }.by -minimum_charge
 end
+
+it "remembers the starting station" do
+  subject.top_up(10)
+  subject.tap_in("victoria")
+  expect(subject.entry_station).to eq "victoria"
+end
+
 end
 
