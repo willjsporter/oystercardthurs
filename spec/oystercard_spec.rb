@@ -2,7 +2,7 @@ require 'Oystercard'
 
 describe OysterCard do
   let(:station) { double :station }
-
+  minimum_charge = OysterCard::MINIMUM_CHARGE
 
   it 'shows the initial balance of the card at 0' do
     expect(subject.balance).to eq 0
@@ -44,46 +44,48 @@ describe OysterCard do
   end
 
   it 'will touch the customer out' do
-    expect(subject.tap_out(:station)).to eq "you have tapped out at station"
+    subject.top_up(10)
+    subject.tap_in(station)
+    expect(subject.tap_out(station)).to eq 'you have tapped out at #[Double :station]'
   end
 
   it 'expects to tell me whether the card is in use?' do
     top_up = OysterCard::DEFAULT_TOP_UP_AMOUNT
     subject.top_up(top_up)
-    subject.tap_in("victoria")
+    subject.tap_in('victoria')
     expect(subject.in_use?).to eq true
   end
 
-  it "Raises an error if there is not enough money" do
+  it 'Raises an error if there is not enough money' do
     expect { subject.tap_in(station) }.to raise_error "Sorry, you don't have enough money! please top-up!"
   end
-  it "removes an amount from the balance" do
+
+  it 'removes an amount from the balance' do
     subject.top_up(20)
-    minimum_charge = OysterCard::MINIMUM_CHARGE
-    expect { subject.tap_out(:station) }.to change { subject.balance }.by -minimum_charge
+    subject.tap_in(station)
+    expect { subject.tap_out(station) }.to change { subject.balance }.by(- minimum_charge)
   end
 
-  it "records that a passanger has entered a station" do
+  it 'records that a passanger has entered a station' do
     subject.top_up(10)
-    subject.tap_in("victoria")
-    expect(subject.entry_station).to eq true
+    subject.tap_in('victoria')
+    expect(subject.entry_station).to eq 'victoria'
   end
 
-  it "has an array of journeys called @journey_array" do
+  it 'has an array of journeys called @journey_array' do
     expect(subject.journey_array.is_a?(Array)).to eq true
   end
 
-  it "can store new elements as hashes in @journey_array" do
+  it 'can store new elements as hashes in @journey_array' do
     subject.top_up(10)
-    subject.tap_in("Victoria")
-    expect(subject.journey_array[0][:in]).to eq "Victoria"
-  end
-  
-  it "adds the values of station in and out to the entry_station array" do
-    subject.top_up(10)
-    subject.tap_in("victoria")
-    subject.tap_out("St James park")
-    expect(subject.entry_station.last.last[:in] = "victoria" && entry_station.last[:out] = "St James park").to eq true
+    subject.tap_in('Victoria')
+    expect(subject.journey_array[0][:in]).to eq 'Victoria'
   end
 
+  it 'adds the values of station in and out to the entry_station array' do
+    subject.top_up(10)
+    subject.tap_in('victoria')
+    subject.tap_out('St James park')
+    expect(subject.journey_array.last[:in] == 'victoria' && subject.journey_array.last[:out] == 'St James park').to eq true
+  end
 end
