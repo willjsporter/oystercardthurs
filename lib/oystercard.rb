@@ -1,10 +1,12 @@
+require_relative 'station.rb'
 
 class OysterCard
+  include StationList
   attr_reader :balance, :entry_station, :journey_array
 
   MAX_BALANCE = 90
   DEFAULT_TOP_UP_AMOUNT = 5
-  MINIMUM_CHARGE = 3
+  MINIMUM_CHARGE = 2
 
   def initialize
     @balance = 0
@@ -21,7 +23,7 @@ class OysterCard
   def tap_in(station)
     raise "Sorry, you don't have enough money! please top-up!" if @balance <= 1
     raise 'error, you have already tapped in' unless @entry_station.nil?
-    @entry_station = station
+    @entry_station = station_rec(station)
     @journey_array << { in: station }
     "You have tapped in at #{station}"
   end
@@ -31,6 +33,11 @@ class OysterCard
     deduct(MINIMUM_CHARGE)
     @journey_array[-1][:out] = station
     "you have tapped out at #{station}"
+  end
+
+  def station_rec(name)
+    exit "Not a valid station" if station_list[name.to_sym]
+    Station.new(name, station_list[name.intern])
   end
 
   def in_use?
@@ -43,3 +50,7 @@ class OysterCard
     @balance -= value
   end
 end
+
+oyster=OysterCard.new
+oyster.top_up(50)
+oyster.tap_in("Victoria")
