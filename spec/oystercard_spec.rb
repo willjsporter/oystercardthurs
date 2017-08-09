@@ -60,14 +60,26 @@ describe OysterCard do
   it "removes an amount from the balance" do
     subject.top_up(20)
     minimum_charge = OysterCard::MINIMUM_CHARGE
-  expect { subject.tap_out }.to change { subject.balance }.by -minimum_charge
-end
+    expect { subject.tap_out }.to change { subject.balance }.by -minimum_charge
+  end
 
-it "remembers the starting station" do
-  subject.top_up(10)
-  subject.tap_in("victoria")
-  expect(subject.entry_station).to eq "victoria"
-end
+  it "remembers the starting station" do
+    subject.top_up(10)
+    subject.tap_in("victoria")
+    expect(subject.entry_station).to eq "victoria"
+  end
+
+  it "has an array of journeys called @journey_array" do
+    expect(journey_array.is_a?(Array)).to eq true
+  end
+
+  it "can store new elements as hashes in @journey_array" do
+    state1=journey_array
+    subject.top_up(10)
+    subject.tap_in("Victoria")
+    expect(subject.journey_array[0][:in]).to eq "Victoria"
+  end
+
+
 
 end
-
